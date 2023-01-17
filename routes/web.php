@@ -1,10 +1,7 @@
 <?php
 
-use App\Http\Controllers\ListingController;
-use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Listing;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,51 +14,18 @@ use App\Models\Listing;
 |
 */
 
-//Database Connection
-// Route::get('/dbconn', function () {
-//     return view('dbconn');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-//common resource routes:
-// index - show all lisitng
-//show - show single listing
-//create - show form to cereate new lisitng
-//store - store new listing
-//edit - show form to edit listing
-//update - update listing
-//destroy = delete listing
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-
-//All Listing.. goes to listing controller to index function
-Route::get('/', [ListingController::class, 'index']);
-
-
-//Show Create Form
-Route::get('/listings/create', [ListingController::class, 'create']);
-
-
-//Store Listing Data
-Route::post('/listings', [ListingController::class, 'store']);
-
-
-//Single Listing
-//passing our listing module and a variable of listing
-Route::get('/listings/{listing}', [ListingController::class, 'show']);
-
-
-// Route::get('posts/{post}', function ($slug) {
-//     // find a post by its slug and pass it to a view called "post"
-
-    
-//     return view('post', [
-//         'post' => Post::find($slug)
-//     ]);
-
-   
-// })->where('post', '[A-z_\-]+');
-
-
-// Route::get('/search', function (Request $request) {
-//     return $request->name . ' ' . $request->city;
-// });
+require __DIR__.'/auth.php';
